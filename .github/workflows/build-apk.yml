@@ -26,22 +26,9 @@ jobs:
       - name: Configurar Android SDK
         uses: android-actions/setup-android@v4
 
-      - name: Buscar directorio, dar permisos y compilar APK
+      - name: Crear Gradle Wrapper global y compilar
         run: |
-          # 1. Busca dónde está guardado gradlew en el repositorio
-          GRADLEW_PATH=$(find . -name "gradlew" -print -quit)
-          
-          if [ -z "$GRADLEW_PATH" ]; then
-            echo "Error: No se encontró el archivo gradlew en ningún lugar del repositorio."
-            exit 1
-          fi
-          
-          # 2. Extrae el directorio donde se ubica gradlew
-          GRADLE_DIR=$(dirname "$GRADLEW_PATH")
-          echo "Proyecto de Android detectado en: $GRADLE_DIR"
-          
-          # 3. Cambia al directorio, da permisos y ejecuta la compilación
-          cd "$GRADLE_DIR"
+          gradle wrapper
           chmod +x gradlew
           ./gradlew :app:assembleDebug
 
@@ -49,8 +36,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Jornalera-V3-debug-apk
-          path: |
-            **/build/outputs/apk/debug/app-debug.apk
-            **/build/outputs/apk/debug/*.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
+
