@@ -26,11 +26,12 @@ jobs:
       - name: Configurar Android SDK
         uses: android-actions/setup-android@v4
 
-      - name: Forzar permisos de ejecución a Gradlew
-        run: chmod +x ./gradlew
-
-      - name: Gerar APK debug
-        run: ./gradlew :app:assembleDebug
+      - name: Crear Gradle Wrapper y Compilar APK
+        # Este bloque genera un entorno de Gradle limpio desde cero e inicia la compilación
+        run: |
+          gradle wrapper --gradle-version 8.9
+          chmod +x ./gradlew
+          ./gradlew :app:assembleDebug
 
       - name: Publicar APK para download
         uses: actions/upload-artifact@v4
