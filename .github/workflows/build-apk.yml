@@ -27,11 +27,12 @@ jobs:
         uses: android-actions/setup-android@v4
 
       - name: Crear Gradle Wrapper y Compilar APK
-        # Este bloque genera un entorno de Gradle limpio desde cero e inicia la compilación
+        # Forzamos a GitHub a ejecutar estos comandos dentro de la carpeta 'app'
+        working-directory: app
         run: |
           gradle wrapper --gradle-version 8.9
           chmod +x ./gradlew
-          ./gradlew :app:assembleDebug
+          ./gradlew assembleDebug
 
       - name: Publicar APK para download
         uses: actions/upload-artifact@v4
