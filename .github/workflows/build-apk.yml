@@ -27,7 +27,6 @@ jobs:
         uses: android-actions/setup-android@v4
 
       - name: Forzar permisos de ejecución a Gradlew
-        # Ejecutamos el comando directamente en la raíz sin buscar carpetas fijas
         run: chmod +x ./gradlew
 
       - name: Gerar APK debug
@@ -38,10 +37,5 @@ jobs:
         with:
           name: Jornalera-V3-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
-          retention-days: 30
-
-            **/build/outputs/apk/debug/app-debug.apk
-            **/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 30
