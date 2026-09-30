@@ -26,9 +26,22 @@ jobs:
       - name: Configurar Android SDK
         uses: android-actions/setup-android@v4
 
-      - name: Crear Gradle Wrapper global y compilar
+      - name: Detectar carpeta del proyecto y compilar APK
         run: |
-          gradle wrapper
+          # 1. Busca el archivo de configuración settings.gradle o settings.gradle.kts
+          SETTINGS_PATH=$(find . -name "settings.gradle*" -print -quit)
+          
+          if [ -z "$SETTINGS_PATH" ]; then
+            echo "Error: No se encontró ningún archivo settings.gradle en el repositorio."
+            exit 1
+          fi
+          
+          # 2. Extrae el directorio real del proyecto
+          PROJECT_DIR=$(dirname "$SETTINGS_PATH")
+          echo "¡Proyecto detectado con éxito en el directorio!: $PROJECT_DIR"
+          
+          # 3. Entra a la carpeta, da permisos al wrapper existente y compila
+          cd "$PROJECT_DIR"
           chmod +x gradlew
           ./gradlew :app:assembleDebug
 
@@ -36,7 +49,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Jornalera-V3-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            **/build/outputs/apk/debug/app-debug.apk
+            **/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 30
-
