@@ -26,18 +26,29 @@ jobs:
       - name: Configurar Android SDK
         uses: android-actions/setup-android@v4
 
-      - name: Crear Gradle Wrapper y Compilar APK
-        # Forzamos a GitHub a ejecutar estos comandos dentro de la carpeta 'app'
-        working-directory: app
+      - name: Forzar Compilación desde Directorio Real
         run: |
+          echo "=== UBICACIÓN ACTUAL ==="
+          pwd
+          echo "=== ARCHIVOS DETECTADOS ==="
+          ls -la
+          
+          # Si el archivo gradle-wrapper no está listo, lo forzamos de forma nativa
+          echo "=== GENERANDO ENTORNO GRADLE ==="
           gradle wrapper --gradle-version 8.9
+          
+          echo "=== ASIGNANDO PERMISOS ==="
           chmod +x ./gradlew
-          ./gradlew assembleDebug
+          
+          echo "=== INICIANDO COMPILACIÓN DE APK ==="
+          ./gradlew :app:assembleDebug
 
       - name: Publicar APK para download
         uses: actions/upload-artifact@v4
         with:
           name: Jornalera-V3-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            app/build/outputs/apk/debug/app-debug.apk
+            **/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 30
