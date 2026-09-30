@@ -11,13 +11,13 @@ permissions:
 jobs:
   build-debug-apk:
     name: Compilar APK debug
-    runs-on: ubuntu-24.04  # 1. Fijado a una versión estable para evitar problemas de compatibilidad
+    runs-on: ubuntu-24.04
     steps:
       - name: Baixar código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5  # Actualizado para eliminar advertencia de Node.js 20
 
       - name: Configurar Java 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5  # Actualizado a v5 para solucionar la advertencia de obsolescencia
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -27,10 +27,11 @@ jobs:
         uses: android-actions/setup-android@v4
 
       - name: Dar permisos de ejecución a Gradlew
-        run: chmod +x gradlew  # 2. CORRECCIÓN ERROR 127: Otorga permisos al script de Gradle
+        run: chmod +x gradlew
 
       - name: Gerar APK debug
-        run: ./gradlew :app:assembleDebug --no-daemon
+        # Eliminamos "--no-daemon" temporalmente para obtener logs más limpios si vuelve a fallar
+        run: ./gradlew :app:assembleDebug
 
       - name: Publicar APK para download
         uses: actions/upload-artifact@v4
